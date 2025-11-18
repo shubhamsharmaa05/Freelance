@@ -1,0 +1,647 @@
+/* ===== Import Space Mono Font ===== */
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+
+/* ===== Global Styling ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Space Mono', monospace;
+}
+
+body {
+    background: #000000;
+    color: #ffffff;
+    line-height: 1.6;
+}
+
+/* ===== Header ===== */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    background: #0a0a0a;
+    border-bottom: 3px solid #FF6B6B;
+    box-shadow: 0 4px 6px rgba(255, 107, 107, 0.1);
+}
+
+header .brand {
+    font-size: 28px;
+    font-weight: 700;
+    color: #FF6B6B;
+    letter-spacing: 2px;
+}
+
+nav a {
+    margin-left: 20px;
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 400;
+    transition: all 0.3s ease;
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+nav a:hover {
+    color: #FF6B6B;
+    background: rgba(255, 107, 107, 0.1);
+}
+
+/* ===== Container ===== */
+.container {
+    max-width: 1000px;
+    margin: 50px auto;
+    padding: 0 20px;
+}
+
+.container h2 {
+    color: #FF6B6B;
+    margin-bottom: 30px;
+    font-size: 32px;
+    letter-spacing: 1px;
+}
+
+/* ===== Form Box ===== */
+.form-box {
+    width: 450px;
+    margin: 100px auto;
+    padding: 35px;
+    background: #0a0a0a;
+    border-radius: 8px;
+    border: 2px solid #FF6B6B;
+    box-shadow: 0 0 20px rgba(255, 107, 107, 0.2);
+}
+
+.form-box h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #FF6B6B;
+    font-size: 28px;
+}
+
+label {
+    margin-top: 15px;
+    display: block;
+    font-size: 14px;
+    color: #ffffff;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+input,
+textarea,
+select {
+    width: 100%;
+    padding: 12px;
+    margin-top: 8px;
+    border-radius: 4px;
+    border: 2px solid #1a1a1a;
+    background: #000000;
+    color: #ffffff;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: #FF6B6B;
+    box-shadow: 0 0 10px rgba(255, 107, 107, 0.2);
+}
+
+textarea {
+    height: 120px;
+    resize: vertical;
+}
+
+/* ===== Buttons ===== */
+button {
+    margin-top: 20px;
+    width: 100%;
+    padding: 14px;
+    background: #FF6B6B;
+    border: none;
+    border-radius: 4px;
+    color: #000000;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background: #ff8585;
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+    transform: translateY(-2px);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+/* ===== Job Cards ===== */
+#jobsList {
+    display: grid;
+    gap: 20px;
+}
+
+.job-card {
+    background: #0a0a0a;
+    border: 2px solid #1a1a1a;
+    padding: 25px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.job-card:hover {
+    border-color: #FF6B6B;
+    box-shadow: 0 0 15px rgba(255, 107, 107, 0.2);
+}
+
+.job-card h3 {
+    margin-bottom: 12px;
+    color: #FF6B6B;
+    font-size: 20px;
+}
+
+.job-card p {
+    margin: 8px 0;
+    color: #cccccc;
+    font-size: 14px;
+}
+
+.job-card p b {
+    color: #ffffff;
+}
+
+/* ===== Admin Sections ===== */
+.container h3 {
+    color: #FF6B6B;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    font-size: 24px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+#adminUsers,
+#adminJobs {
+    background: #0a0a0a;
+    padding: 25px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    border: 2px solid #1a1a1a;
+}
+
+.admin-item {
+    padding: 15px;
+    border-bottom: 1px solid #1a1a1a;
+    color: #cccccc;
+    transition: all 0.3s ease;
+}
+
+.admin-item:hover {
+    background: rgba(255, 107, 107, 0.05);
+    border-color: #FF6B6B;
+}
+
+.admin-item:last-child {
+    border: none;
+}
+
+.admin-item b {
+    color: #FF6B6B;
+}
+
+/* ===== Small Buttons (Delete/Done) ===== */
+.small-btn {
+    padding: 8px 16px;
+    background: #FF6B6B;
+    color: #000000;
+    border: none;
+    border-radius: 4px;
+    margin-top: 10px;
+    margin-right: 10px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.small-btn:hover {
+    background: #ff8585;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 107, 107, 0.3);
+}
+
+/* ===== Status Styling ===== */
+.status-pending {
+    color: #FFB84D !important;
+    font-weight: 700;
+}
+
+.status-completed {
+    color: #4DFF88 !important;
+    font-weight: 700;
+}
+
+/* ===== Empty State ===== */
+#jobsList p {
+    text-align: center;
+    color: #666666;
+    font-size: 16px;
+    padding: 40px;
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 600px) {
+    .form-box {
+        width: 90%;
+        margin: 50px auto;
+        padding: 25px;
+    }
+
+    header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    header .brand {
+        margin-bottom: 15px;
+    }
+
+    nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    nav a {
+        margin: 5px;
+    }
+
+    .container h2 {
+        font-size: 24px;
+    }
+}
+/* ===== Footer Styling ===== */
+footer {
+    background: #0a0a0a;
+    border-top: 3px solid #FF6B6B;
+    padding: 30px 20px;
+    text-align: center;
+    margin-top: 50px;
+    box-shadow: 0 -4px 6px rgba(255, 107, 107, 0.1);
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-text {
+    color: #cccccc;
+    font-size: 14px;
+    margin-bottom: 15px;
+    letter-spacing: 1px;
+}
+
+.creator-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 16px;
+    padding: 12px 24px;
+    border: 2px solid #FF6B6B;
+    border-radius: 6px;
+    background: rgba(255, 107, 107, 0.1);
+    transition: all 0.3s ease;
+    letter-spacing: 1px;
+}
+
+.creator-link:hover {
+    background: #FF6B6B;
+    color: #000000;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+}
+
+.creator-link .highlight {
+    color: #FF6B6B;
+    transition: color 0.3s ease;
+}
+
+.creator-link:hover .highlight {
+    color: #000000;
+}
+
+/* Responsive Footer */
+@media (max-width: 600px) {
+    footer {
+        padding: 25px 15px;
+    }
+    
+    .creator-link {
+        font-size: 14px;
+        padding: 10px 18px;
+    }
+}
+/* ===== Profile Styling ===== */
+.profile-card {
+    background: #0a0a0a;
+    border: 2px solid #1a1a1a;
+    padding: 30px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    background: #FF6B6B;
+    color: #000;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 700;
+}
+
+.profile-info {
+    flex: 1;
+}
+
+.profile-info h2 {
+    margin: 0 0 5px 0;
+    color: #FF6B6B;
+}
+
+.profile-role {
+    background: rgba(255, 107, 107, 0.2);
+    color: #FF6B6B;
+    padding: 4px 12px;
+    border-radius: 4px;
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    margin: 5px 0;
+}
+
+.profile-email {
+    color: #cccccc;
+    font-size: 14px;
+}
+
+.edit-btn {
+    padding: 10px 20px;
+    background: #FF6B6B;
+    color: #000;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.edit-btn:hover {
+    background: #ff8585;
+    transform: translateY(-2px);
+}
+
+.profile-details {
+    margin-top: 25px;
+    padding-top: 25px;
+    border-top: 1px solid #1a1a1a;
+}
+
+.profile-details p {
+    margin: 10px 0;
+    color: #cccccc;
+}
+
+.profile-details b {
+    color: #ffffff;
+}
+
+.profile-details a {
+    color: #FF6B6B;
+    text-decoration: none;
+}
+
+.profile-details a:hover {
+    text-decoration: underline;
+}
+
+.incomplete-msg {
+    text-align: center;
+    color: #FFB84D;
+    padding: 20px;
+    margin-top: 20px;
+    font-size: 16px;
+}
+
+/* ===== Modal Styling ===== */
+.modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: #0a0a0a;
+    border: 2px solid #FF6B6B;
+    border-radius: 8px;
+    padding: 30px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.close {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    color: #FF6B6B;
+    font-size: 32px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close:hover {
+    color: #ff8585;
+}
+
+/* ===== Pick Job Button ===== */
+.pick-btn {
+    background: #4DFF88 !important;
+    color: #000 !important;
+}
+
+.pick-btn:hover {
+    background: #6DFFA0 !important;
+}
+
+/* ===== My Jobs Section ===== */
+#myJobsSection h3 {
+    color: #FF6B6B;
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 600px) {
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .modal-content {
+        width: 95%;
+        padding: 20px;
+    }
+}
+/* ===== Status Styling ===== */
+.status-pending {
+    color: #FFB84D !important;
+    font-weight: 700;
+}
+
+.status-assigned {
+    color: #4DA6FF !important;
+    font-weight: 700;
+}
+
+.status-completed {
+    color: #4DFF88 !important;
+    font-weight: 700;
+}
+/* ===== Enhanced Navigation ===== */
+nav a {
+    margin-left: 20px;
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 400;
+    transition: all 0.3s ease;
+    padding: 8px 12px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+nav a:hover {
+    color: #FF6B6B;
+    background: rgba(255, 107, 107, 0.1);
+}
+
+/* Profile Nav with Avatar */
+.profile-nav {
+    background: rgba(255, 107, 107, 0.1);
+    border: 1px solid #FF6B6B;
+}
+
+.profile-nav:hover {
+    background: rgba(255, 107, 107, 0.2);
+    transform: translateY(-2px);
+}
+
+.user-avatar {
+    width: 28px;
+    height: 28px;
+    background: #FF6B6B;
+    color: #000;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+/* Logout Button */
+.logout-btn {
+    background: rgba(255, 59, 59, 0.1);
+    border: 1px solid #FF6B6B;
+    color: #ff6b6b !important;
+}
+
+.logout-btn:hover {
+    background: #FF6B6B;
+    color: #000 !important;
+    transform: translateY(-2px);
+}
+
+/* Responsive Navigation */
+@media (max-width: 768px) {
+    nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 5px;
+    }
+
+    nav a {
+        margin: 5px;
+        font-size: 13px;
+        padding: 6px 10px;
+    }
+
+    .user-avatar {
+        width: 24px;
+        height: 24px;
+        font-size: 12px;
+    }
+}
+/* ===== Profile Logout Button ===== */
+.logout-profile-btn {
+    padding: 10px 24px;
+    background: #FF6B6B;
+    color: #ffffff;
+    border: 2px solid #FF6B6B;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.logout-profile-btn:hover {
+    background: transparent;
+    color: #FF6B6B;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+}

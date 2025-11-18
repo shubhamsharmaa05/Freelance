@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Freelance Hub – Connect. Collaborate. Create.</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Landing Page Specific Styles */
+        .hero {
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #000000 0%, #0a0a0a 50%, #1a1a1a 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 107, 107, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 107, 107, 0.15) 0%, transparent 50%);
+            animation: pulse 8s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+        }
+
+        .hero h1 {
+            font-size: 64px;
+            color: #FF6B6B;
+            margin-bottom: 20px;
+            letter-spacing: 3px;
+            text-shadow: 0 0 30px rgba(255, 107, 107, 0.5);
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .hero .tagline {
+            font-size: 24px;
+            color: #cccccc;
+            margin-bottom: 40px;
+            letter-spacing: 2px;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .hero .description {
+            font-size: 18px;
+            color: #999999;
+            margin-bottom: 50px;
+            line-height: 1.8;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease-out 0.9s both;
+        }
+
+        .cta-btn {
+            padding: 18px 40px;
+            font-size: 18px;
+            font-weight: 700;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+
+        .cta-primary {
+            background: #FF6B6B;
+            color: #000;
+            border: 2px solid #FF6B6B;
+        }
+
+        .cta-primary:hover {
+            background: transparent;
+            color: #FF6B6B;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
+        }
+
+        .cta-secondary {
+            background: transparent;
+            color: #FF6B6B;
+            border: 2px solid #FF6B6B;
+        }
+
+        .cta-secondary:hover {
+            background: #FF6B6B;
+            color: #000;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 80px 20px;
+            background: #000000;
+        }
+
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .features h2 {
+            text-align: center;
+            font-size: 48px;
+            color: #FF6B6B;
+            margin-bottom: 60px;
+            letter-spacing: 2px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+
+        .feature-card {
+            background: #0a0a0a;
+            border: 2px solid #1a1a1a;
+            padding: 40px 30px;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            border-color: #FF6B6B;
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(255, 107, 107, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .feature-card h3 {
+            color: #FF6B6B;
+            font-size: 24px;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .feature-card p {
+            color: #cccccc;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        /* How It Works Section */
+        .how-it-works {
+            padding: 80px 20px;
+            background: #0a0a0a;
+        }
+
+        .how-it-works h2 {
+            text-align: center;
+            font-size: 48px;
+            color: #FF6B6B;
+            margin-bottom: 60px;
+            letter-spacing: 2px;
+        }
+
+        .steps {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            gap: 30px;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            background: #000000;
+            border: 2px solid #1a1a1a;
+            padding: 30px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .step:hover {
+            border-color: #FF6B6B;
+            transform: translateX(10px);
+        }
+
+        .step-number {
+            font-size: 48px;
+            font-weight: 700;
+            color: #FF6B6B;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .step-content h3 {
+            color: #FF6B6B;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .step-content p {
+            color: #cccccc;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 40px;
+            }
+
+            .hero .tagline {
+                font-size: 18px;
+            }
+
+            .hero .description {
+                font-size: 16px;
+            }
+
+            .cta-btn {
+                padding: 14px 28px;
+                font-size: 16px;
+            }
+
+            .features h2,
+            .how-it-works h2 {
+                font-size: 36px;
+            }
+
+            .step {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .step-number {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="landing.html" class="brand">Freelance Hub</a>
+        <nav>
+            <!-- Navigation will be updated dynamically -->
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>FREELANCE HUB</h1>
+            <p class="tagline">Connect. Collaborate. Create.</p>
+            <p class="description">
+                The ultimate platform connecting talented freelancers with amazing clients. 
+                Post jobs, find opportunities, and build your freelance career in one place.
+            </p>
+            <div class="cta-buttons">
+                <a href="register.html" class="cta-btn cta-primary">Get Started</a>
+                <a href="home.html" class="cta-btn cta-secondary">Browse Jobs</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="features-container">
+            <h2>Why Choose Us?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <span class="feature-icon">💼</span>
+                    <h3>Post Jobs Easily</h3>
+                    <p>Clients can quickly post job opportunities with detailed descriptions and requirements.</p>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">🎯</span>
+                    <h3>Find Perfect Matches</h3>
+                    <p>Freelancers can browse and pick jobs that match their skills and interests.</p>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">👤</span>
+                    <h3>Complete Profiles</h3>
+                    <p>Showcase your skills, experience, and portfolio with detailed profiles.</p>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">📊</span>
+                    <h3>Track Progress</h3>
+                    <p>Monitor job status from pending to assigned to completed in real-time.</p>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">🔒</span>
+                    <h3>Secure Platform</h3>
+                    <p>Your data is safe with our secure authentication and database system.</p>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">⚡</span>
+                    <h3>Fast & Simple</h3>
+                    <p>Clean interface, quick responses, and seamless user experience.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works">
+        <h2>How It Works</h2>
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">01</div>
+                <div class="step-content">
+                    <h3>Create Your Account</h3>
+                    <p>Sign up as a client or freelancer in just a few clicks. It's completely free!</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">02</div>
+                <div class="step-content">
+                    <h3>Complete Your Profile</h3>
+                    <p>Add your skills, contact info, and GitHub link to stand out from the crowd.</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">03</div>
+                <div class="step-content">
+                    <h3>Post or Browse Jobs</h3>
+                    <p>Clients post jobs, freelancers browse and pick the perfect opportunity.</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">04</div>
+                <div class="step-content">
+                    <h3>Start Collaborating</h3>
+                    <p>Connect with clients, work on projects, and build lasting relationships.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p class="footer-text">© 2024 Freelance Hub.</p>
+            <a href="https://shubhamsharmaa05.github.io/Being.pandit/being.pandit.html" 
+               target="_blank" 
+               class="creator-link">
+                Created by <span class="highlight">Being.Pandit</span> ✨
+            </a>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile – Freelance Hub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <a href="landing.html" class="brand">Freelance Hub</a>
+        <nav>
+         <a href="home.html">Jobs</a>
+        <a href="postjob.html">Post Job</a>
+        <a href="register.html">Register</a>
+        <a href="login.html">Login</a>
+        <a href="profile.html">Profile</a>
+        <a href="admin.html">Admin</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <!-- Logout Button in Profile -->
+        <div style="text-align: right; margin-bottom: 20px;">
+            <button onclick="logoutUser()" class="logout-profile-btn">
+                🚪 Logout
+            </button>
+        </div>
+
+        <div id="profileSection">
+            <!-- Profile content will be loaded here -->
+        </div>
+
+        <!-- Edit Profile Modal -->
+        <div id="editModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="close" onclick="closeEditModal()">&times;</span>
+                <h2>Complete Your Profile</h2>
+                
+                <label>Name</label>
+                <input id="editName" type="text">
+
+                <label>Age</label>
+                <input id="editAge" type="number" min="18" max="100">
+
+                <label>Skills (comma separated)</label>
+                <textarea id="editSkills" placeholder="JavaScript, Python, Design..."></textarea>
+
+                <label>Contact Info</label>
+                <input id="editContact" type="text" placeholder="Phone or other contact">
+
+                <label>GitHub Link</label>
+                <input id="editGithub" type="url" placeholder="https://github.com/username">
+
+                <button onclick="saveProfile()">Save Profile</button>
+            </div>
+        </div>
+
+        <!-- My Jobs Section -->
+        <div id="myJobsSection" style="margin-top: 40px;">
+            <h3>My Jobs</h3>
+            <div id="myJobsList"></div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p class="footer-text">© 2024 Freelance Hub.</p>
+            <a href="https://shubhamsharmaa05.github.io/Being.pandit/being.pandit.html" 
+               target="_blank" 
+               class="creator-link">
+                Created by <span class="highlight">Being.Pandit</span> ✨
+            </a>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

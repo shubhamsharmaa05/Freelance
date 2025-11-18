@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register – Freelance Hub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+   <a href="landing.html" class="brand">Freelance Hub</a>
+    <nav>
+        <a href="home.html">Jobs</a>
+        <a href="postjob.html">Post Job</a>
+        <a href="register.html">Register</a>
+        <a href="login.html">Login</a>
+        <a href="profile.html">Profile</a>
+        <a href="admin.html">Admin</a>
+    </nav>
+</header>
+    <div class="form-box">
+        <h2>Create Account</h2>
+
+        <label>Your Name</label>
+        <input id="regName" type="text">
+
+        <label>Email</label>
+        <input id="regEmail" type="email">
+
+        <label>Password</label>
+        <input id="regPass" type="password">
+
+        <label>Role</label>
+        <select id="regRole">
+            <option value="client">Client (Post Work)</option>
+            <option value="freelancer">Freelancer (Do Work)</option>
+        </select>
+
+        <button onclick="registerUser()">Register</button>
+    </div>
+<footer>
+    <div class="footer-content">
+        <p class="footer-text">© 2024 Freelance Hub.</p>
+        <a href="https://shubhamsharmaa05.github.io/Being.pandit/being.pandit.html" 
+           target="_blank" 
+           class="creator-link">
+            Created by <span class="highlight">Being.Pandit</span> 
+        </a>
+    </div>
+</footer>
+    <script src="script.js"></script>
+</body>
+</html>
