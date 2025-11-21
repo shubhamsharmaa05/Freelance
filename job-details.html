@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Details – Freelance Hub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <a href="landing.html" class="brand">Freelance Hub</a>
+        <nav>
+            <!-- Navigation will be updated dynamically -->
+        </nav>
+    </header>
+
+    <div class="container">
+        <div id="jobDetailsContainer">
+            <!-- Job details will be loaded here -->
+            <div class="loading">Loading job details...</div>
+        </div>
+    </div>
+
+    <!-- Proposal Modal -->
+    <div id="proposalModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeProposalModal()">&times;</span>
+            <h2>Submit Proposal</h2>
+            
+            <input type="hidden" id="proposalJobId">
+            
+            <label>Cover Letter With Your Contact Info</label>
+            <textarea id="proposalCoverLetter" placeholder="Explain why you're the best fit for this job..." rows="6"></textarea>
+
+            <label>Proposed Budget ($) *</label>
+            <input id="proposalBudget" type="number" min="0" step="10" placeholder="Your proposed rate">
+
+            <label>Estimated Duration</label>
+            <input id="proposalDuration" type="text" placeholder="e.g., 2 weeks">
+
+            <button onclick="submitProposal()">Submit Proposal</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p class="footer-text">© 2024 Freelance Hub.</p>
+            <a href="https://shubhamsharmaa05.github.io/Being.pandit/being.pandit.html" 
+               target="_blank" 
+               class="creator-link">
+                Created by <span class="highlight">Being.Pandit</span> 
+            </a>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Get job ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const jobId = urlParams.get('id');
+
+        async function loadJobDetails() {
+            if (!jobId) {
+                document.getElementById('jobDetailsContainer').innerHTML = 
+                    '<p class="error-message">Invalid job ID</p>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:5500/jobs/${jobId}`);
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    displayJobDetails(data.job);
+                } else {
+                    document.getElementById('jobDetailsContainer').innerHTML = 
+                        '<p class="error-message">Job not found</p>';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('jobDetailsContainer').innerHTML = 
+                    '<p class="error-message">Error loading job details</p>';
+            }
+        }
+
+        function displayJobDetails(job) {
+            const currentUser = getCurrentUser();
+            const container = document.getElementById('jobDetailsContainer');
+            
+            const statusClass = getStatusClass(job.status);
+            const budgetDisplay = job.budget_type === 'hourly' 
+                ? `${formatCurrency(job.budget_min)}/hr - ${formatCurrency(job.budget_max)}/hr`
+                : `${formatCurrency(job.budget_min)} - ${formatCurrency(job.budget_max)}`;
+
+            const skills = job.required_skills && job.required_skills.length > 0
+                ? job.required_skills.map(skill => 
+                    `<span class="skill-badge">${escapeHtml(skill.skill_name)}</span>`
+                  ).join('')
+                : '<span class="text-muted">No specific skills required</span>';
+
+            container.innerHTML = `
+                <div class="job-details-card">
+                    <div class="job-details-header">
+                        <div>
+                            <h1>${escapeHtml(job.title)}</h1>
+                            <p class="text-muted">Posted by ${escapeHtml(job.client_name)} • ${formatDate(job.created_at)}</p>
+                        </div>
+                        <span class="badge ${statusClass}">${job.status.toUpperCase()}</span>
+                    </div>
+
+                    <div class="job-details-grid">
+                        <div class="job-details-main">
+                            <section class="detail-section">
+                                <h3>Description</h3>
+                                <p>${escapeHtml(job.description)}</p>
+                            </section>
+
+                            ${job.requirements ? `
+                                <section class="detail-section">
+                                    <h3>Requirements</h3>
+                                    <p>${escapeHtml(job.requirements)}</p>
+                                </section>
+                            ` : ''}
+
+                            <section class="detail-section">
+                                <h3>Required Skills</h3>
+                                <div class="skills-list">
+                                    ${skills}
+                                </div>
+                            </section>
+                        </div>
+
+                        <div class="job-details-sidebar">
+                            <div class="sidebar-card">
+                                <h3>Job Details</h3>
+                                <div class="detail-item">
+                                    <strong>Budget:</strong>
+                                    <span>${budgetDisplay}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <strong>Budget Type:</strong>
+                                    <span>${job.budget_type}</span>
+                                </div>
+                                ${job.duration ? `
+                                    <div class="detail-item">
+                                        <strong>Duration:</strong>
+                                        <span>${escapeHtml(job.duration)}</span>
+                                    </div>
+                                ` : ''}
+                                <div class="detail-item">
+                                    <strong>Experience Level:</strong>
+                                    <span>${job.experience_level}</span>
+                                </div>
+                                ${job.deadline ? `
+                                    <div class="detail-item">
+                                        <strong>Deadline:</strong>
+                                        <span>${formatDate(job.deadline)}</span>
+                                    </div>
+                                ` : ''}
+                                ${job.category_name ? `
+                                    <div class="detail-item">
+                                        <strong>Category:</strong>
+                                        <span>${escapeHtml(job.category_name)}</span>
+                                    </div>
+                                ` : ''}
+                            </div>
+
+                            <div class="sidebar-card">
+                                <h3>Activity</h3>
+                                <div class="detail-item">
+                                    <strong>Proposals:</strong>
+                                    <span>${job.proposal_count || 0}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <strong>Views:</strong>
+                                    <span>${job.views_count || 0}</span>
+                                </div>
+                            </div>
+
+                            <div class="sidebar-actions">
+                                ${currentUser && currentUser.role === 'freelancer' && job.status === 'pending' ? `
+                                    <button class="btn btn-primary" onclick="openProposalModal(${job.job_id})" style="width: 100%;">
+                                        Submit Proposal
+                                    </button>
+                                    <button class="btn btn-outline" onclick="saveJob(${job.job_id})" style="width: 100%;">
+                                        Save Job
+                                    </button>
+                                ` : ''}
+
+                                ${currentUser && currentUser.user_id === job.client_id ? `
+                                    <button class="btn btn-info" onclick="window.location.href='proposals.html?job_id=${job.job_id}'" style="width: 100%;">
+                                        View Proposals (${job.proposal_count || 0})
+                                    </button>
+                                    <button class="btn btn-danger" onclick="deleteJob(${job.job_id})" style="width: 100%;">
+                                        Delete Job
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="job-details-footer">
+                        <button class="btn btn-secondary" onclick="window.history.back()">← Back to Jobs</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Load job details on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadJobDetails();
+        });
+    </script>
+
+    <style>
+        .job-details-card {
+            background: #0a0a0a;
+            border: 2px solid #1a1a1a;
+            border-radius: 8px;
+            padding: 30px;
+        }
+
+        .job-details-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #1a1a1a;
+            margin-bottom: 30px;
+            gap: 20px;
+        }
+
+        .job-details-header h1 {
+            color: #FF6B6B;
+            margin-bottom: 10px;
+        }
+
+        .text-muted {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .job-details-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .job-details-main {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .detail-section h3 {
+            color: #FF6B6B;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .detail-section p {
+            color: #ccc;
+            line-height: 1.8;
+        }
+
+        .sidebar-card {
+            background: rgba(26, 26, 26, 0.5);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #1a1a1a;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-card h3 {
+            color: #FF6B6B;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #1a1a1a;
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-item strong {
+            color: #fff;
+        }
+
+        .detail-item span {
+            color: #ccc;
+        }
+
+        .sidebar-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .job-details-footer {
+            padding-top: 20px;
+            border-top: 2px solid #1a1a1a;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 100px 20px;
+            color: #999;
+            font-size: 18px;
+        }
+
+        @media (max-width: 768px) {
+            .job-details-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .job-details-header {
+                flex-direction: column;
+            }
+        }
+    </style>
+</body>
+</html>

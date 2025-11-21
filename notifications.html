@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications – Freelance Hub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <a href="landing.html" class="brand">Freelance Hub</a>
+        <nav></nav>
+    </header>
+
+    <div class="container">
+        <div class="notifications-header">
+            <h2>🔔 Notifications</h2>
+            <button class="btn btn-secondary" onclick="markAllAsRead()">Mark All as Read</button>
+        </div>
+
+        <div id="notificationsList">
+            <div class="loading">Loading notifications...</div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p class="footer-text">© 2024 Freelance Hub.</p>
+            <a href="https://shubhamsharmaa05.github.io/Being.pandit/being.pandit.html" 
+               target="_blank" class="creator-link">
+                Created by <span class="highlight">Being.Pandit</span>
+            </a>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        async function loadNotifications() {
+            const currentUser = getCurrentUser();
+            if (!currentUser) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:5500/auth/notifications/${currentUser.user_id}`);
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    displayNotifications(data.notifications);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('notificationsList').innerHTML = 
+                    '<p class="error-message">Error loading notifications</p>';
+            }
+        }
+
+        function displayNotifications(notifications) {
+            const container = document.getElementById('notificationsList');
+
+            if (notifications.length === 0) {
+                container.innerHTML = '<p class="empty-state">No notifications yet</p>';
+                return;
+            }
+
+            container.innerHTML = '';
+
+            notifications.forEach(notif => {
+                const card = document.createElement('div');
+                card.className = `notification-card ${notif.is_read ? 'read' : 'unread'}`;
+
+                const typeIcon = {
+                    'job': '💼',
+                    'proposal': '✉️',
+                    'message': '💬',
+                    'payment': '💰',
+                    'review': '⭐',
+                    'system': '🔔'
+                }[notif.notification_type] || '📌';
+
+                card.innerHTML = `
+                    <div class="notification-icon ${notif.notification_type}">
+                        ${typeIcon}
+                    </div>
+                    <div class="notification-content">
+                        <h4>${escapeHtml(notif.title)}</h4>
+                        <p>${escapeHtml(notif.message)}</p>
+                        <span class="notification-time">${formatDate(notif.created_at)}</span>
+                    </div>
+                    ${!notif.is_read ? `
+                        <button class="btn-mark-read" onclick="markAsRead(${notif.notification_id})">
+                            Mark Read
+                        </button>
+                    ` : ''}
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        function markAsRead(notificationId) {
+            // API call to mark as read
+            fetch(`http://localhost:5500/auth/notifications/read/${notificationId}`, {
+                method: 'PUT'
+            }).then(() => loadNotifications());
+        }
+
+        function markAllAsRead() {
+            // Mark all notifications as read
+            alert('Mark all as read feature coming soon');
+        }
+
+        document.addEventListener('DOMContentLoaded', loadNotifications);
+    </script>
+
+    <style>
+        .notifications-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .notification-card {
+            background: #0a0a0a;
+            border: 2px solid #1a1a1a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: start;
+            gap: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .notification-card.unread {
+            border-color: #FF6B6B;
+            background: rgba(255, 107, 107, 0.05);
+        }
+
+        .notification-card:hover {
+            transform: translateX(5px);
+        }
+
+        .notification-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            background: rgba(255, 107, 107, 0.1);
+            flex-shrink: 0;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-content h4 {
+            color: #FF6B6B;
+            margin-bottom: 8px;
+        }
+
+        .notification-content p {
+            color: #ccc;
+            margin-bottom: 8px;
+        }
+
+        .notification-time {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .btn-mark-read {
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid #FF6B6B;
+            color: #FF6B6B;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-mark-read:hover {
+            background: #FF6B6B;
+            color: #000;
+        }
+    </style>
+</body>
+</html>

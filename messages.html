@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages – Freelance Hub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <a href="landing.html" class="brand">Freelance Hub</a>
+        <nav></nav>
+    </header>
+
+    <div class="container">
+        <h2>💬 Messages</h2>
+
+        <div class="messages-container">
+            <!-- Conversations List -->
+            <div class="conversations-panel">
+                <div class="conversations-header">
+                    <h3>Conversations</h3>
+                    <button class="btn btn-primary" onclick="openNewMessageModal()">+ New</button>
+                </div>
+                <div id="conversationsList">
+                    <div class="loading">Loading conversations...</div>
+                </div>
+            </div>
+
+            <!-- Messages Panel -->
+            <div class="messages-panel">
+                <div id="messagesHeader" class="messages-header">
+                    <p class="empty-state">Select a conversation to view messages</p>
+                </div>
+                <div id="messagesList" class="messages-list">
+                    <!-- Messages will be loaded here -->
+                </div>
+                <div id="messageInput" class="message-input" style="display: none;">
+                    <textarea id="newMessage" placeholder="Type your message..." rows="3"></textarea>
+                    <button onclick="sendMessage()" class="btn btn-primary">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Message Modal -->
+    <div id="newMessageModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeNewMessageModal()">&times;</span>
+            <h2>New Message</h2>
+            
+            <label>Select User</label>
+            <select id="recipientSelect">
+                <option value="">-- Select Recipient --</option>
+            </select>
+
+            <label>Message</label>
+            <textarea id="firstMessage" placeholder="Type your message..." rows="5"></textarea>
+
+            <button onclick="startNewConversation()" class="btn btn-primary">Send Message</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p class="footer-text">© 2024 Freelance Hub.</p>
+            <a href="https://shubhamsharmaa05.github.io/Being.pandit/being.pandit.html" 
+               target="_blank" 
+               class="creator-link">
+                Created by <span class="highlight">Being.Pandit</span>
+            </a>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        let currentConversation = null;
+        let currentRecipient = null;
+        let messageInterval = null;
+
+        async function loadConversations() {
+            const currentUser = getCurrentUser();
+            if (!currentUser) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/messages/conversations/${currentUser.user_id}`);
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    displayConversations(data.conversations);
+                } else {
+                    document.getElementById('conversationsList').innerHTML = 
+                        '<p class="empty-state">No conversations yet</p>';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('conversationsList').innerHTML = 
+                    '<p class="error-message">Error loading conversations</p>';
+            }
+        }
+
+        function displayConversations(conversations) {
+            const container = document.getElementById('conversationsList');
+
+            if (conversations.length === 0) {
+                container.innerHTML = '<p class="empty-state">No conversations yet</p>';
+                return;
+            }
+
+            container.innerHTML = '';
+
+            conversations.forEach(conv => {
+                const card = document.createElement('div');
+                card.className = 'conversation-card' + (conv.unread_count > 0 ? ' unread' : '');
+                card.onclick = () => loadMessages(conv.other_user_id, conv.other_user_name);
+
+                card.innerHTML = `
+                    <div class="conversation-avatar">
+                        ${conv.other_user_name.charAt(0).toUpperCase()}
+                    </div>
+                    <div class="conversation-info">
+                        <h4>${escapeHtml(conv.other_user_name)}</h4>
+                        <p class="last-message">${escapeHtml(conv.last_message || 'No messages yet')}</p>
+                        <span class="conversation-time">${formatDate(conv.last_message_time)}</span>
+                    </div>
+                    ${conv.unread_count > 0 ? `<span class="unread-badge">${conv.unread_count}</span>` : ''}
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        async function loadMessages(recipientId, recipientName) {
+            const currentUser = getCurrentUser();
+            if (!currentUser) return;
+
+            currentRecipient = recipientId;
+            currentConversation = recipientId;
+
+            // Update header
+            document.getElementById('messagesHeader').innerHTML = `
+                <div class="message-recipient">
+                    <div class="user-avatar">${recipientName.charAt(0).toUpperCase()}</div>
+                    <h3>${escapeHtml(recipientName)}</h3>
+                </div>
+            `;
+
+            // Show input
+            document.getElementById('messageInput').style.display = 'flex';
+
+            try {
+                const response = await fetch(`${API_URL}/messages/thread/${currentUser.user_id}/${recipientId}`);
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    displayMessages(data.messages, currentUser.user_id);
+                    
+                    // Mark messages as read
+                    markMessagesAsRead(recipientId);
+                } else {
+                    document.getElementById('messagesList').innerHTML = 
+                        '<p class="empty-state">No messages yet. Start the conversation!</p>';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('messagesList').innerHTML = 
+                    '<p class="error-message">Error loading messages</p>';
+            }
+        }
+
+        function displayMessages(messages, currentUserId) {
+            const container = document.getElementById('messagesList');
+
+            if (messages.length === 0) {
+                container.innerHTML = '<p class="empty-state">No messages yet</p>';
+                return;
+            }
+
+            container.innerHTML = '';
+
+            messages.forEach(msg => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = msg.sender_id === currentUserId ? 'message sent' : 'message received';
+
+                messageDiv.innerHTML = `
+                    <div class="message-content">
+                        <p>${escapeHtml(msg.message_text)}</p>
+                        <span class="message-time">${formatDate(msg.sent_at)}</span>
+                    </div>
+                `;
+
+                container.appendChild(messageDiv);
+            });
+
+            // Scroll to bottom
+            container.scrollTop = container.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const currentUser = getCurrentUser();
+            if (!currentUser || !currentRecipient) return;
+
+            const messageText = document.getElementById('newMessage').value.trim();
+            if (!messageText) {
+                alert('Please type a message');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/messages/send`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sender_id: currentUser.user_id,
+                        receiver_id: currentRecipient,
+                        message_text: messageText
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    document.getElementById('newMessage').value = '';
+                    loadMessages(currentRecipient, '');
+                    loadConversations();
+                } else {
+                    alert('Failed to send message');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error sending message');
+            }
+        }
+
+        async function markMessagesAsRead(senderId) {
+            const currentUser = getCurrentUser();
+            if (!currentUser) return;
+
+            try {
+                await fetch(`${API_URL}/messages/mark-read`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        receiver_id: currentUser.user_id,
+                        sender_id: senderId
+                    })
+                });
+            } catch (error) {
+                console.error('Error marking as read:', error);
+            }
+        }
+
+        function openNewMessageModal() {
+            document.getElementById('newMessageModal').style.display = 'block';
+            loadAllUsers();
+        }
+
+        function closeNewMessageModal() {
+            document.getElementById('newMessageModal').style.display = 'none';
+        }
+
+        async function loadAllUsers() {
+            const currentUser = getCurrentUser();
+            try {
+                const response = await fetch(`${API_URL}/messages/users/${currentUser.user_id}`);
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    const select = document.getElementById('recipientSelect');
+                    select.innerHTML = '<option value="">-- Select Recipient --</option>';
+                    
+                    data.users.forEach(user => {
+                        const option = document.createElement('option');
+                        option.value = user.user_id;
+                        option.textContent = `${user.name} (${user.role})`;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading users:', error);
+            }
+        }
+
+        async function startNewConversation() {
+            const recipientId = document.getElementById('recipientSelect').value;
+            const messageText = document.getElementById('firstMessage').value.trim();
+            const currentUser = getCurrentUser();
+
+            if (!recipientId || !messageText) {
+                alert('Please select a recipient and type a message');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/messages/send`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sender_id: currentUser.user_id,
+                        receiver_id: recipientId,
+                        message_text: messageText
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    closeNewMessageModal();
+                    document.getElementById('firstMessage').value = '';
+                    loadConversations();
+                    
+                    // Find recipient name and load conversation
+                    const select = document.getElementById('recipientSelect');
+                    const recipientName = select.options[select.selectedIndex].text.split(' (')[0];
+                    loadMessages(recipientId, recipientName);
+                } else {
+                    alert('Failed to send message');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error sending message');
+            }
+        }
+
+        // Auto-refresh messages every 5 seconds if a conversation is open
+        setInterval(() => {
+            if (currentRecipient) {
+                loadMessages(currentRecipient, '');
+                loadConversations();
+            }
+        }, 5000);
+
+        document.addEventListener('DOMContentLoaded', loadConversations);
+    </script>
+
+    <style>
+        .messages-container {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+            height: calc(100vh - 250px);
+            min-height: 500px;
+        }
+
+        .conversations-panel {
+            background: #0a0a0a;
+            border: 2px solid #1a1a1a;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .conversations-header {
+            padding: 20px;
+            border-bottom: 2px solid #1a1a1a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .conversations-header h3 {
+            color: #FF6B6B;
+            margin: 0;
+        }
+
+        .conversations-header button {
+            margin: 0;
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        #conversationsList {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .conversation-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 20px;
+            border-bottom: 1px solid #1a1a1a;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .conversation-card:hover {
+            background: rgba(255, 107, 107, 0.1);
+        }
+
+        .conversation-card.unread {
+            background: rgba(255, 107, 107, 0.05);
+        }
+
+        .conversation-avatar {
+            width: 50px;
+            height: 50px;
+            background: #FF6B6B;
+            color: #000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .conversation-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .conversation-info h4 {
+            color: #fff;
+            margin: 0 0 5px 0;
+            font-size: 16px;
+        }
+
+        .last-message {
+            color: #999;
+            font-size: 14px;
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .conversation-time {
+            color: #666;
+            font-size: 12px;
+        }
+
+        .unread-badge {
+            background: #FF6B6B;
+            color: #000;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .messages-panel {
+            background: #0a0a0a;
+            border: 2px solid #1a1a1a;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .messages-header {
+            padding: 20px;
+            border-bottom: 2px solid #1a1a1a;
+        }
+
+        .message-recipient {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .message-recipient h3 {
+            color: #FF6B6B;
+            margin: 0;
+        }
+
+        .messages-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            display: flex;
+            max-width: 70%;
+        }
+
+        .message.sent {
+            margin-left: auto;
+        }
+
+        .message.received {
+            margin-right: auto;
+        }
+
+        .message-content {
+            padding: 12px 16px;
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .message.sent .message-content {
+            background: #FF6B6B;
+            color: #000;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.received .message-content {
+            background: #1a1a1a;
+            color: #fff;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-content p {
+            margin: 0 0 5px 0;
+            word-wrap: break-word;
+        }
+
+        .message-time {
+            font-size: 11px;
+            opacity: 0.7;
+        }
+
+        .message-input {
+            padding: 20px;
+            border-top: 2px solid #1a1a1a;
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .message-input textarea {
+            flex: 1;
+            margin: 0;
+            resize: none;
+        }
+
+        .message-input button {
+            margin: 0;
+            padding: 12px 24px;
+        }
+
+        @media (max-width: 968px) {
+            .messages-container {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+
+            .conversations-panel {
+                max-height: 300px;
+            }
+
+            .messages-panel {
+                min-height: 400px;
+            }
+
+            .message {
+                max-width: 85%;
+            }
+        }
+    </style>
+</body>
+</html>

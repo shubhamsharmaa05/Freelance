@@ -8,41 +8,122 @@
 </head>
 <body>
     <header>
-    <a href="landing.html" class="brand">Freelance Hub</a>
-    <nav>
-        <a href="home.html">Jobs</a>
-        <a href="postjob.html">Post Job</a>
-        <a href="register.html">Register</a>
-        <a href="login.html">Login</a>
-        <a href="profile.html">Profile</a>
-        <a href="admin.html">Admin</a>
-    </nav>
-</header>
+        <a href="landing.html" class="brand">Freelance Hub</a>
+        <nav>
+            <!-- Navigation will be updated dynamically -->
+        </nav>
+    </header>
 
-    <div class="form-box">
+    <div class="form-box" style="max-width: 700px;">
         <h2>Post a Job</h2>
 
-        <label>Job Title</label>
-        <input id="jobTitle" type="text">
+        <label>Job Title *</label>
+        <input id="jobTitle" type="text" placeholder="e.g., Build a React E-commerce Website">
 
-        <label>Description</label>
-        <textarea id="jobDesc"></textarea>
+        <label>Category</label>
+        <select id="jobCategory">
+            <option value="">Select Category</option>
+            <!-- Will be populated dynamically -->
+        </select>
 
-        <label>Contact Info</label>
-        <input id="jobContact" type="text">
+        <label>Description *</label>
+        <textarea id="jobDesc" placeholder="Describe what you need..."></textarea>
+
+        <label>Requirements</label>
+        <textarea id="jobRequirements" placeholder="List specific requirements, qualifications, or deliverables..."></textarea>
+
+        <label>Budget Type</label>
+        <select id="budgetType">
+            <option value="fixed">Fixed Price</option>
+            <option value="hourly">Hourly Rate</option>
+        </select>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div>
+                <label>Minimum Budget ($)</label>
+                <input id="budgetMin" type="number" min="0" step="10" placeholder="500">
+            </div>
+            <div>
+                <label>Maximum Budget ($)</label>
+                <input id="budgetMax" type="number" min="0" step="10" placeholder="1000">
+            </div>
+        </div>
+
+        <label>Expected Duration</label>
+        <input id="duration" type="text" placeholder="e.g., 2 weeks, 1 month">
+
+        <label>Experience Level</label>
+        <select id="experienceLevel">
+            <option value="entry">Entry Level</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="expert">Expert</option>
+        </select>
+
+        <label>Deadline (Optional)</label>
+        <input id="deadline" type="date">
+
+        <label>Required Skills</label>
+        <div id="skillsCheckboxes" class="checkbox-group">
+            <!-- Will be populated dynamically -->
+        </div>
 
         <button onclick="postJob()">Submit Job</button>
     </div>
-<footer>
-    <div class="footer-content">
-        <p class="footer-text">© 2024 Freelance Hub. </p>
-        <a href="https://shubhamsharmaa05.github.io/Being.pandit/being.pandit.html" 
-           target="_blank" 
-           class="creator-link">
-            Created by <span class="highlight">Being.Pandit</span> 
-        </a>
-    </div>
-</footer>
+
+    <footer>
+        <div class="footer-content">
+            <p class="footer-text">© 2024 Freelance Hub.</p>
+            <a href="https://shubhamsharmaa05.github.io/Being.pandit/being.pandit.html" 
+               target="_blank" 
+               class="creator-link">
+                Created by <span class="highlight">Being.Pandit</span> 
+            </a>
+        </div>
+    </footer>
+
     <script src="script.js"></script>
+    <script>
+        // Load categories and skills on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Load categories
+            try {
+                const catResponse = await fetch('http://localhost:5500/jobs/categories/all');
+                const catData = await catResponse.json();
+                
+                if (catData.status === 'success') {
+                    const select = document.getElementById('jobCategory');
+                    catData.categories.forEach(cat => {
+                        const option = document.createElement('option');
+                        option.value = cat.category_id;
+                        option.textContent = cat.category_name;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading categories:', error);
+            }
+
+            // Load skills
+            try {
+                const skillResponse = await fetch('http://localhost:5500/auth/skills');
+                const skillData = await skillResponse.json();
+                
+                if (skillData.status === 'success') {
+                    const container = document.getElementById('skillsCheckboxes');
+                    skillData.skills.forEach(skill => {
+                        const label = document.createElement('label');
+                        label.className = 'checkbox-label';
+                        label.innerHTML = `
+                            <input type="checkbox" name="jobSkills" value="${skill.skill_id}">
+                            ${skill.skill_name}
+                        `;
+                        container.appendChild(label);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading skills:', error);
+            }
+        });
+    </script>
 </body>
 </html>

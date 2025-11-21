@@ -7,47 +7,52 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header>
-   <a href="landing.html" class="brand">Freelance Hub</a>
-    <nav>
-        <a href="home.html">Jobs</a>
-        <a href="postjob.html">Post Job</a>
-        <a href="register.html">Register</a>
-        <a href="login.html">Login</a>
-        <a href="profile.html">Profile</a>
-        <a href="admin.html">Admin</a>
-    </nav>
-</header>
+    <header>
+        <a href="landing.html" class="brand">Freelance Hub</a>
+        <nav>
+            <!-- Navigation will be updated dynamically -->
+        </nav>
+    </header>
+
     <div class="form-box">
         <h2>Create Account</h2>
 
-        <label>Your Name</label>
-        <input id="regName" type="text">
+        <label>Your Name *</label>
+        <input id="regName" type="text" placeholder="John Doe">
 
-        <label>Email</label>
-        <input id="regEmail" type="email">
+        <label>Email *</label>
+        <input id="regEmail" type="email" placeholder="john@example.com">
 
-        <label>Password</label>
-        <input id="regPass" type="password">
+        <label>Phone (Optional)</label>
+        <input id="regPhone" type="tel" placeholder="+1234567890">
 
-        <label>Role</label>
+        <label>Password *</label>
+        <input id="regPass" type="password" placeholder="Minimum 6 characters">
+
+        <label>I want to *</label>
         <select id="regRole">
-            <option value="client">Client (Post Work)</option>
-            <option value="freelancer">Freelancer (Do Work)</option>
+            <option value="client">Hire Freelancers (Client)</option>
+            <option value="freelancer">Find Work (Freelancer)</option>
         </select>
 
-        <button onclick="registerUser()">Register</button>
+        <button onclick="registerUser()">Create Account</button>
+
+        <p style="text-align: center; margin-top: 20px; color: #999;">
+            Already have an account? <a href="login.html" style="color: #FF6B6B;">Login here</a>
+        </p>
     </div>
-<footer>
-    <div class="footer-content">
-        <p class="footer-text">© 2024 Freelance Hub.</p>
-        <a href="https://shubhamsharmaa05.github.io/Being.pandit/being.pandit.html" 
-           target="_blank" 
-           class="creator-link">
-            Created by <span class="highlight">Being.Pandit</span> 
-        </a>
-    </div>
-</footer>
+
+    <footer>
+        <div class="footer-content">
+            <p class="footer-text">© 2024 Freelance Hub.</p>
+            <a href="https://shubhamsharmaa05.github.io/Being.pandit/being.pandit.html" 
+               target="_blank" 
+               class="creator-link">
+                Created by <span class="highlight">Being.Pandit</span> 
+            </a>
+        </div>
+    </footer>
+
     <script src="script.js"></script>
 </body>
 </html>

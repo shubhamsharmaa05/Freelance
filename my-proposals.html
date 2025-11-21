@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Proposals – Freelance Hub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <a href="landing.html" class="brand">Freelance Hub</a>
+        <nav></nav>
+    </header>
+
+    <div class="container">
+        <h2>📋 My Proposals</h2>
+
+        <div class="proposals-tabs">
+            <button class="tab-btn active" onclick="filterProposals('all')">All Proposals</button>
+            <button class="tab-btn" onclick="filterProposals('pending')">Pending</button>
+            <button class="tab-btn" onclick="filterProposals('accepted')">Accepted</button>
+            <button class="tab-btn" onclick="filterProposals('rejected')">Rejected</button>
+        </div>
+
+        <div id="myProposalsList">
+            <div class="loading">Loading your proposals...</div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p class="footer-text">© 2024 Freelance Hub.</p>
+            <a href="https://shubhamsharmaa05.github.io/Being.pandit/being.pandit.html" 
+               target="_blank" 
+               class="creator-link">
+                Created by <span class="highlight">Being.Pandit</span>
+            </a>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        let allProposals = [];
+        let currentFilter = 'all';
+
+        async function loadMyProposals() {
+            const currentUser = getCurrentUser();
+            if (!currentUser) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            if (currentUser.role !== 'freelancer') {
+                document.getElementById('myProposalsList').innerHTML = 
+                    '<p class="error-message">Only freelancers can view proposals</p>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/jobs/proposals/my/${currentUser.user_id}`);
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    allProposals = data.proposals;
+                    displayProposals(allProposals);
+                } else {
+                    document.getElementById('myProposalsList').innerHTML = 
+                        '<p class="empty-state">You haven\'t submitted any proposals yet</p>';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('myProposalsList').innerHTML = 
+                    '<p class="error-message">Error loading proposals</p>';
+            }
+        }
+
+        function filterProposals(status) {
+            currentFilter = status;
+            
+            // Update active tab
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Filter proposals
+            let filtered = allProposals;
+            if (status !== 'all') {
+                filtered = allProposals.filter(p => p.status === status);
+            }
+            
+            displayProposals(filtered);
+        }
+
+        function displayProposals(proposals) {
+            const container = document.getElementById('myProposalsList');
+
+            if (proposals.length === 0) {
+                container.innerHTML = '<p class="empty-state">No proposals found</p>';
+                return;
+            }
+
+            container.innerHTML = '';
+
+            proposals.forEach(proposal => {
+                const card = document.createElement('div');
+                card.className = 'proposal-card my-proposal';
+
+                const statusClass = proposal.status === 'accepted' ? 'status-completed' : 
+                                  proposal.status === 'rejected' ? 'status-cancelled' : 
+                                  'status-pending';
+
+                card.innerHTML = `
+                    <div class="proposal-header">
+                        <div>
+                            <h3>${escapeHtml(proposal.job_title)}</h3>
+                            <p class="job-client">Posted by: ${escapeHtml(proposal.client_name)}</p>
+                        </div>
+                        <span class="badge ${statusClass}">${proposal.status.toUpperCase()}</span>
+                    </div>
+                    
+                    <div class="proposal-content">
+                        <div class="proposal-details">
+                            <p><strong>Your Proposal Budget:</strong> ${formatCurrency(proposal.proposed_budget)}</p>
+                            ${proposal.proposed_duration ? `<p><strong>Duration:</strong> ${escapeHtml(proposal.proposed_duration)}</p>` : ''}
+                            <p><strong>Submitted:</strong> ${formatDate(proposal.submitted_at)}</p>
+                        </div>
+                        
+                        <div class="cover-letter-preview">
+                            <h4>Cover Letter:</h4>
+                            <p>${escapeHtml(proposal.cover_letter)}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="proposal-actions">
+                        <button onclick="viewJobDetails(${proposal.job_id})" class="btn btn-secondary">
+                            View Job Details
+                        </button>
+                        ${proposal.status === 'pending' ? `
+                            <button onclick="withdrawProposal(${proposal.proposal_id})" class="btn btn-danger">
+                                Withdraw Proposal
+                            </button>
+                        ` : ''}
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        async function withdrawProposal(proposalId) {
+            if (!confirm('Are you sure you want to withdraw this proposal?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/jobs/proposal/withdraw`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ proposal_id: proposalId })
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    alert('✅ Proposal withdrawn successfully');
+                    loadMyProposals();
+                } else {
+                    alert('❌ ' + (data.message || 'Failed to withdraw proposal'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('❌ Server error!');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadMyProposals);
+    </script>
+
+    <style>
+        .proposals-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            background: transparent;
+            border: 2px solid #1a1a1a;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            margin: 0;
+        }
+
+        .tab-btn:hover {
+            border-color: #FF6B6B;
+            background: rgba(255, 107, 107, 0.1);
+        }
+
+        .tab-btn.active {
+            background: #FF6B6B;
+            border-color: #FF6B6B;
+            color: #000;
+        }
+
+        .my-proposal {
+            margin-bottom: 20px;
+        }
+
+        .job-client {
+            color: #999;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+
+        .cover-letter-preview {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #1a1a1a;
+        }
+
+        .cover-letter-preview h4 {
+            color: #FF6B6B;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .cover-letter-preview p {
+            color: #ccc;
+            line-height: 1.6;
+        }
+    </style>
+</body>
+</html>

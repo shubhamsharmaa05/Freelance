@@ -9,18 +9,11 @@
 <body>
     <header>
         <a href="landing.html" class="brand">Freelance Hub</a>
-        <nav>
-         <a href="home.html">Jobs</a>
-        <a href="postjob.html">Post Job</a>
-        <a href="register.html">Register</a>
-        <a href="login.html">Login</a>
-        <a href="profile.html">Profile</a>
-        <a href="admin.html">Admin</a>
-        </nav>
+        <nav></nav>
     </header>
 
     <div class="container">
-        <!-- Logout Button in Profile -->
+        <!-- Logout Button -->
         <div style="text-align: right; margin-bottom: 20px;">
             <button onclick="logoutUser()" class="logout-profile-btn">
                 🚪 Logout
@@ -29,6 +22,7 @@
 
         <div id="profileSection">
             <!-- Profile content will be loaded here -->
+            <div class="loading">Loading profile...</div>
         </div>
 
         <!-- Edit Profile Modal -->
@@ -37,20 +31,76 @@
                 <span class="close" onclick="closeEditModal()">&times;</span>
                 <h2>Complete Your Profile</h2>
                 
-                <label>Name</label>
-                <input id="editName" type="text">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Name *</label>
+                        <input id="editName" type="text" required>
+                    </div>
 
-                <label>Age</label>
-                <input id="editAge" type="number" min="18" max="100">
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input id="editPhone" type="tel" placeholder="+1234567890">
+                    </div>
 
-                <label>Skills (comma separated)</label>
-                <textarea id="editSkills" placeholder="JavaScript, Python, Design..."></textarea>
+                    <div class="form-group">
+                        <label>Age</label>
+                        <input id="editAge" type="number" min="18" max="100">
+                    </div>
 
-                <label>Contact Info</label>
-                <input id="editContact" type="text" placeholder="Phone or other contact">
+                    <div class="form-group">
+                        <label>Professional Title</label>
+                        <input id="editTitle" type="text" placeholder="e.g., Full Stack Developer">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Hourly Rate ($)</label>
+                        <input id="editHourlyRate" type="number" min="0" step="5" placeholder="50">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Experience (years)</label>
+                        <input id="editExperience" type="number" min="0" max="50" placeholder="5">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Location</label>
+                        <input id="editLocation" type="text" placeholder="City">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Country</label>
+                        <input id="editCountry" type="text" placeholder="Country">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Languages</label>
+                        <input id="editLanguages" type="text" placeholder="English, Spanish, Hindi">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Availability</label>
+                        <select id="editAvailability">
+                            <option value="available">Available</option>
+                            <option value="busy">Busy</option>
+                            <option value="unavailable">Unavailable</option>
+                        </select>
+                    </div>
+                </div>
+
+                <label>Bio</label>
+                <textarea id="editBio" rows="4" placeholder="Tell us about yourself..."></textarea>
 
                 <label>GitHub Link</label>
                 <input id="editGithub" type="url" placeholder="https://github.com/username">
+
+                <label>LinkedIn Link</label>
+                <input id="editLinkedin" type="url" placeholder="https://linkedin.com/in/username">
+
+                <label>Portfolio Link</label>
+                <input id="editPortfolio" type="url" placeholder="https://yourportfolio.com">
+
+                <label>Website</label>
+                <input id="editWebsite" type="url" placeholder="https://yourwebsite.com">
 
                 <button onclick="saveProfile()">Save Profile</button>
             </div>
@@ -58,7 +108,6 @@
 
         <!-- My Jobs Section -->
         <div id="myJobsSection" style="margin-top: 40px;">
-            <h3>My Jobs</h3>
             <div id="myJobsList"></div>
         </div>
     </div>
@@ -75,5 +124,64 @@
     </footer>
 
     <script src="script.js"></script>
+
+    <style>
+        .logout-profile-btn {
+            padding: 10px 20px;
+            background: rgba(255, 59, 59, 0.1);
+            border: 2px solid #FF6B6B;
+            color: #FF6B6B;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .logout-profile-btn:hover {
+            background: #FF6B6B;
+            color: #000;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin: 0 0 8px 0;
+            font-size: 12px;
+        }
+
+        .form-group input,
+        .form-group select {
+            margin: 0;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .detail-grid p {
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid,
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </body>
 </html>
